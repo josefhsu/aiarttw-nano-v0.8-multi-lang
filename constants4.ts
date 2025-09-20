@@ -1,0 +1,143 @@
+// constants4.ts
+export const CINEMATIC_STYLES = [
+  {
+    category: 'A. 橘藍對比：現代商業鉅片的標誌',
+    movies: [
+      { name: '變形金剛 (Transformers)', prompt: '橘藍對比教科書，金屬爆炸暖橘，天空背景冷藍，高光銳利，肌膚健康。' },
+      { name: '瘋狂麥斯：憤怒道 (Mad Max: Fury Road)', prompt: '極致橘藍，末日黃沙暖橘，夜晚場景深邃冷藍，高飽和度，暴力美學。' },
+      { name: '復仇者聯盟 (The Avengers)', prompt: '團隊英雄主義，膚色偏暖橘，科技與外星環境偏冷藍，色彩鮮明，充滿漫畫感。' },
+      { name: '阿凡達 (Avatar)', prompt: '潘朵拉星球的奇幻藍，與人類科技的冰冷金屬形成對比，高飽和螢光色，夢幻感。' },
+      { name: '神鬼奇航 (Pirates of the Caribbean)', prompt: '熱帶陽光的暖黃，加勒比海水的青藍，營造冒險、神秘與異域風情。' },
+      { name: '007：空降危機 (Skyfall)', prompt: '現代動作片典範，上海霓虹的藍，蘇格蘭荒野的灰藍，搭配爆炸的暖橘，精緻且充滿張力。' },
+    ]
+  },
+  {
+    category: 'B. 冷冽科技與未來感：科幻與驚悚的基調',
+    movies: [
+      { name: '駭客任務 (The Matrix)', prompt: '數位矩陣綠，高對比，皮革黑，虛擬現實的冰冷與非人感。' },
+      { name: '銀翼殺手2049 (Blade Runner 2049)', prompt: '視覺藝術的巔峰，霧霾橘黃，霓虹青藍，極簡構圖，末世孤獨與詩意。' },
+      { name: '關鍵報告 (Minority Report)', prompt: '高對比，過曝高光，冷藍色調，未來世界的冰冷、精確與非人性化。' },
+      { name: '酷斯拉 (Godzilla, 2014)', prompt: '未來科技，冷冽，低彩度墨綠，巨大怪物的壓迫感，陰鬱末日氛圍。' },
+      { name: '遺落戰境 (Oblivion)', prompt: '極簡純白，高光溢出，冷藍色調，展現末日地球的潔淨、孤寂與虛假。' },
+      { name: '普羅米修斯 (Prometheus)', prompt: '太空深藍，異星洞穴墨綠，對比微弱，充滿未知、恐懼與神秘主義色彩。' },
+    ]
+  },
+  {
+    category: 'C. 高對比與漂白效果：戰爭、犯罪與絕望',
+    movies: [
+      { name: '搶救雷恩大兵 (Saving Private Ryan)', prompt: '戰爭片標竿，漂白效果，高對比，低飽和，畫面顆粒感強，紀實與殘酷。' },
+      { name: '火線追緝令 (Seven)', prompt: '城市陰暗，高對比，永恆的雨天，髒綠與褐色，壓抑、絕望、道德淪喪。' },
+      { name: '人類之子 (Children of Men)', prompt: '漂白感，手持攝影，低飽和灰綠，末日寫實主義，紀錄片般的真實與混亂。' },
+      { name: '三百壯士：斯巴達的逆襲 (300)', prompt: '高對比，褐色肌肉，鮮血深紅，刻意壓低飽和度，油畫般的史詩暴力美學。' },
+      { name: '康斯坦汀：驅魔神探 (Constantine)', prompt: '地獄暖橘，人間冷綠，高對比，宗教符號感強烈，善惡分明的視覺風格。' },
+    ]
+  },
+  {
+    category: 'D. 低飽和與寫實主義：壓抑與人性的掙扎',
+    movies: [
+      { name: '小丑 (Joker)', prompt: '70年代城市衰敗，髒黃，病態綠，低飽和，寫實壓抑，主角精神世界的視覺化。' },
+      { name: '險路勿近 (No Country for Old Men)', prompt: '美國西部荒漠，褪色暖黃，低飽和，自然光，宿命感的冷酷與現實。' },
+      { name: '海邊的曼徹斯特 (Manchester by the Sea)', prompt: '冬日麻州，陰冷灰藍，低飽和，極度寫實，情感麻木與內心痛苦的體現。' },
+      { name: '末路浩劫 (The Road)', prompt: '萬物死寂，極致灰調，幾乎無色彩，末日絕望的極致表現。' },
+      { name: '神鬼獵人 (The Revenant)', prompt: '全自然光拍攝，極致冷冽，冰藍，灰白，生命堅韌，史詩級寫實。' },
+    ]
+  },
+  {
+    category: 'E. 濃郁飽和的童話與奇幻：夢境與風格化',
+    movies: [
+      { name: '歡迎來到布達佩斯大飯店 (The Grand Budapest Hotel)', prompt: '對稱美學，馬卡龍色盤，粉彩，高飽和，精緻復古，每個時代有專屬色調。' },
+      { name: '艾蜜莉的異想世界 (Amélie)', prompt: '巴黎童話，高飽和紅綠，暖陽黃，復古濾鏡，浪漫奇幻。' },
+      { name: '少年PI的奇幻漂流 (Life of Pi)', prompt: '海天一色，高飽和橘、藍、紫，超現實主義色彩，如夢似幻，信仰與故事的視覺化。' },
+      { name: '羊男的迷宮 (Pan\'s Labyrinth)', prompt: '現實世界冷灰藍，奇幻世界暖金黃，強烈對比，童話的殘酷與美麗。' },
+      { name: '重慶森林 (Chungking Express)', prompt: '王家衛風格，潮濕飽和，城市霓虹，抽幀慢鏡，迷幻、疏離、都市人的孤獨。' },
+      { name: '花樣年華 (In the Mood for Love)', prompt: '濃郁油畫感，飽和的紅、綠，昏黃燈光，壓抑的情感與時代的曖昧。' },
+      { name: '英雄 (Hero)', prompt: '張藝謀色彩美學，用紅、藍、白、綠、黑五種純色，講述不同版本的羅生門故事，極致的東方美學。' },
+    ]
+  },
+  {
+    category: 'F. 復古懷舊暖色調：時光與記憶',
+    movies: [
+      { name: '從前，有個好萊塢 (Once Upon a Time in Hollywood)', prompt: '模仿60年代膠片質感，飽和的陽光暖黃，復古色調，是對逝去時代的溫柔回望。' },
+      { name: '雲端情人 (Her)', prompt: '溫暖親密，高飽和暖色（尤其紅色），無藍色，復古未來感，柔和粉彩，科技時代的孤獨與愛。' },
+      { name: '陽光普照 (A Sun)', prompt: '台灣亞熱帶的濕熱感，高光溢出，暖黃色調，家庭的溫暖與潛藏的陰影。' },
+      { name: '教父 (The Godfather)', prompt: '經典黑幫片，低曝光，濃郁的暖黃與陰影，油畫質感，權力、腐朽與家庭的厚重感。' },
+      { name: '銀翼殺手 (Blade Runner, 1982)', prompt: '永恆的黑夜與雨，高對比霓虹，黑色電影的基調，復古未來主義的開創者。' },
+    ]
+  },
+  {
+    category: 'G. 單色與象徵性用色：極簡與力量',
+    movies: [
+      { name: '辛德勒的名單 (Schindler\'s List)', prompt: '黑白影像，紀錄片式的真實與沉重，唯一的「紅衣女孩」象徵著麻木中的良知與希望。' },
+      { name: '萬惡城市 (Sin City)', prompt: '極致高對比黑白，僅保留特定象徵性色彩（紅、黃、藍），漫畫風格的視覺衝擊。' },
+      { name: '羅馬 (Roma)', prompt: '數位攝影的細膩黑白，豐富的灰階層次，對記憶與時代的溫柔凝視。' },
+      { name: '大紅燈籠高高掛 (Raise the Red Lantern)', prompt: '壓抑的封建大院灰調，與權力象徵的「大紅燈籠」形成強烈對比。' },
+      { name: '樂來越愛你 (La La Land)', prompt: '高飽和度的三原色，模仿特藝七彩膠片(Technicolor)效果，夢幻、浪漫，致敬好萊塢黃金時代。' },
+      { name: '寄生上流 (Parasite)', prompt: '富人區陽光暖調，窮人區潮濕冷綠，色彩對比體現階級差異，極具象徵意義。' },
+    ]
+  },
+  {
+    category: '更多經典電影調色風格速覽 (41-100)',
+    movies: [
+        { name: '黑暗騎士 (The Dark Knight)', prompt: '城市冷藍，金屬質感，寫實主義漫畫風格。' },
+        { name: '魔戒 (The Lord of the Rings)', prompt: '夏爾暖綠，魔多死灰，史詩奇幻，自然與邪惡的對比。' },
+        { name: '全面啟動 (Inception)', prompt: '夢境層次分明，現實冷峻，夢境色調各異（雨天冷藍、酒店暖黃）。' },
+        { name: '星際效應 (Interstellar)', prompt: '地球末日黃沙，太空深邃黑暗，宇宙奇觀的寫實感。' },
+        { name: '鬥陣俱樂部 (Fight Club)', prompt: '前期病態綠，後期偏暖，骯髒、頹廢、精神分裂的視覺化。' },
+        { name: '落日車神 (Drive)', prompt: '霓虹粉與藍，復古80年代，冷酷、浪漫、暴力。' },
+        { name: '猜火車 (Trainspotting)', prompt: '骯髒、高飽和、廣角畸變，青春的迷惘與失控。' },
+        { name: '黑天鵝 (Black Swan)', prompt: '高對比，蒼白膚色，黑白對立，心理驚悚與人格分裂。' },
+        { name: '星際大戰 (Star Wars)', prompt: '經典科幻，色彩飽滿，正邪分明，復古未來感。' },
+        { name: '回到未來 (Back to the Future)', prompt: '50年代暖調，80年代明亮，色彩區分時代。' },
+        { name: 'E.T. 外星人 (E.T. the Extra-Terrestrial)', prompt: '柔和暖光，逆光剪影，童話般的溫馨與神秘。' },
+        { name: '侏羅紀公園 (Jurassic Park)', prompt: '熱帶雨林飽和綠，琥珀暖黃，冒險與自然的敬畏。' },
+        { name: '鐵達尼號 (Titanic)', prompt: '現代冷藍，過去暖黃，回憶的溫暖與現實的冰冷。' },
+        { name: '沉默的羔羊 (The Silence of the Lambs)', prompt: '陰冷綠，監獄的壓抑，心理恐懼。' },
+        { name: '綠色奇蹟 (The Green Mile)', prompt: '溫暖懷舊色調，奇蹟與人性的光輝。' },
+        { name: '刺激1995 (The Shawshank Redemption)', prompt: '監獄前期冷灰，後期逐漸變暖，希望的象徵。' },
+        { name: '阿甘正傳 (Forrest Gump)', prompt: '柔和、乾淨、明亮的色調，純真視角下的美國史。' },
+        { name: '鬼店 (The Shining)', prompt: '高飽和紅、黃，詭異的對稱，心理恐怖的極致。' },
+        { name: '現代啟示錄 (Apocalypse Now)', prompt: '叢林濕熱綠，戰爭迷幻黃，超現實的戰爭瘋狂。' },
+        { name: '2001太空漫遊 (2001: A Space Odyssey)', prompt: '高對比，純淨的白與深邃的黑，極簡主義科幻美學。' },
+        { name: '計程車司機 (Taxi Driver)', prompt: '紐約街頭骯髒霓虹，濕潤的紅色，城市疏離與暴力。' },
+        { name: '斷背山 (Brokeback Mountain)', prompt: '懷俄明州自然風光，色調內斂、克制，情感的壓抑。' },
+        { name: '愛情，不用翻譯 (Lost in Translation)', prompt: '東京夜景的冷色調，酒店的暖色，異鄉的孤獨與短暫的慰藉。' },
+        { name: '血色將至 (There Will Be Blood)', prompt: '油畫質感，荒涼大地色，貪婪與毀滅的史詩。' },
+        { name: '美國心玫瑰情 (American Beauty)', prompt: '郊區生活的平淡色調，與象徵慾望的「紅色」形成強烈對比。' },
+        { name: '藍絲絨 (Blue Velvet)', prompt: '郊區的明亮與地下的陰暗形成對比，大衛·林區的超現實主義。' },
+        { name: '攻殼機動隊 (Ghost in the Shell, 1995)', prompt: '經典賽博龐克，陰冷青綠色調，對存在主義的哲學探討。' },
+        { name: 'AKIRA (阿基拉)', prompt: '新東京夜景的紅色與霓虹，末世科幻動畫的里程碑。' },
+        { name: '臥虎藏龍 (Crouching Tiger, Hidden Dragon)', prompt: '竹林翠綠，大漠黃沙，東方武俠的詩意與禪意。' },
+        { name: '色，戒 (Lust, Caution)', prompt: '油畫般的質感，壓抑的色調，展現時代背景下的情感與慾望。' },
+        { name: '熔爐 (Silenced)', prompt: '濃霧，冷色調，低飽和，揭示社會黑暗的壓抑與無力。' },
+        { name: '下女的誘惑 (The Handmaiden)', prompt: '日式宅邸的陰鬱綠，與情慾場景的暖色，精緻、詭譎、華麗。' },
+        { name: '燃燒烈愛 (Burning)', prompt: '鄉村夕陽的暖調，與城市生活的冷調，神秘、不安的氛圍。' },
+        { name: '犬之島 (Isle of Dogs)', prompt: '復古日式風格，高對比，紅、黑、白為主，魏斯·安德森的又一力作。' },
+        { name: '逃出絕命鎮 (Get Out)', prompt: '前期陽光明媚，後期陰森冷調，社會驚悚的色彩轉變。' },
+        { name: '月光下的藍色男孩 (Moonlight)', prompt: '高對比，飽和的藍色調，潮濕的邁阿密夜晚，詩意地展現主角的內心世界。' },
+        { name: '敦克爾克大行動 (Dunkirk)', prompt: '諾蘭的寫實風格，灰藍色調，膠片質感，身歷其境的戰爭體驗。' },
+        { name: '社群網戰 (The Social Network)', prompt: '大衛·芬奇風格，數字時代的冷峻，低飽和度的黃綠色調。' },
+        { name: '決殺令 (Django Unchained)', prompt: '昆汀風格，高對比，鮮血的紅，致敬西部片的復古色調。' },
+        { name: '藍色是最溫暖的顏色 (Blue Is the Warmest Color)', prompt: '藍色作為核心象徵，貫穿全片，代表愛情、悲傷與記憶。' },
+        { name: '心靈捕手 (Good Will Hunting)', prompt: '秋季波士頓的暖色調，溫暖、治癒。' },
+        { name: '真愛挑日子 (One Day)', prompt: '溫暖、柔和的英倫風格，充滿懷舊感。' },
+        { name: '香水 (Perfume: The Story of a Murderer)', prompt: '18世紀法國的骯髒與華麗，色彩濃郁，充滿感官刺激。' },
+        { name: '傲慢與偏見 (Pride & Prejudice, 2005)', prompt: '英國鄉村的自然光，油畫般的田園風光。' },
+        { name: 'V怪客 (V for Vendetta)', prompt: '極權主義的冷灰，與革命火焰的暖紅形成對比。' },
+        { name: '險惡 (Sinister)', prompt: '復古8mm膠片的暖色調，與現實的冷色調交織，營造恐怖感。' },
+        { name: '安眠醫生 (Doctor Sleep)', prompt: '致敬《鬼店》的高飽和色調，結合現代恐怖片的冷色風格。' },
+        { name: '從你的全世界路過 (I Belonged to You)', prompt: '現代都市愛情，高飽和，明亮，充滿浪漫濾鏡。' },
+        { name: '後來的我們 (Us and Them)', prompt: '過去是彩色，現在是黑白，用色彩區分時空，講述遺憾。' },
+        { name: '無間道 (Infernal Affairs)', prompt: '天台的冷藍調，高對比光影，宿命與身份的迷失。' },
+        { name: '功夫 (Kung Fu Hustle)', prompt: '復古暖黃，高飽和，漫畫式的誇張色彩。' },
+        { name: '讓子彈飛 (Let the Bullets Fly)', prompt: '土匪的黃褐色，復古感，充滿力量與荷爾蒙。' },
+        { name: '悲情城市 (A City of Sadness)', prompt: '侯孝賢長鏡頭美學，低飽和，自然光，時代的靜默與哀愁。' },
+        { name: '一一 (Yi Yi)', prompt: '楊德昌的冷靜客觀，色彩平實，反映台北中產生活的現實。' },
+        { name: '告白 (Confessions)', prompt: '極致日式冷調，MV式的慢鏡頭，過曝與暗角，人性的極致惡意。' },
+        { name: '天氣之子 (Weathering with You)', prompt: '新海誠風格，極致的光影，高飽和的藍天與城市燈火，清新通透。' },
+        { name: '千年女優 (Millennium Actress)', prompt: '運用色彩穿梭不同時代的電影場景，奇幻而浪漫。' },
+        { name: '鋼琴師 (The Pianist)', prompt: '戰爭摧毀的城市廢墟，從溫暖到死寂的灰調轉變。' },
+        { name: '美麗人生 (Life is Beautiful)', prompt: '前半段溫暖明亮的喜劇色調，後半段集中營的灰冷，形成強烈的情感對比。' },
+        { name: '愛在三部曲 (The Before Trilogy)', prompt: '自然光，寫實色調，隨著時間推移，色調從浪漫趨於平實。' },
+    ]
+  },
+];
