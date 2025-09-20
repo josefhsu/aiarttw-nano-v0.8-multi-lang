@@ -5,6 +5,7 @@ import { useCanvasState } from './hooks/useCanvasState';
 import { useZIndexManager } from './hooks/useZIndexManager';
 import { useConnections } from './hooks/useConnections';
 import { useCanvasHandlers } from './hooks/useCanvasHandlers';
+import { useI18n } from './hooks/useI18n';
 
 import { InfiniteCanvas } from './components/InfiniteCanvas';
 import { Toolbar, Tool } from './components/Toolbar';
@@ -37,14 +38,15 @@ interface ContextualActionModalProps {
 }
 
 const ContextualActionModal: React.FC<ContextualActionModalProps> = ({ onClose, onSelectAction }) => {
+    const { t } = useI18n();
     return (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center backdrop-blur-sm" onMouseDown={onClose}>
             <div
                 className="bg-[var(--cyber-bg)] border border-[var(--cyber-border)] p-6 rounded-xl shadow-2xl flex flex-col gap-4 w-full max-w-md"
                 onMouseDown={(e) => e.stopPropagation()}
             >
-                <h2 className="text-xl font-bold text-[var(--cyber-cyan)] text-center">智能輔助選項</h2>
-                <p className="text-sm text-gray-400 text-center -mt-2">偵測到您已選取圖片，請選擇操作：</p>
+                <h2 className="text-xl font-bold text-[var(--cyber-cyan)] text-center">{t('app.contextualActionTitle')}</h2>
+                <p className="text-sm text-gray-400 text-center -mt-2">{t('app.contextualActionDesc')}</p>
                 <div className="flex flex-col gap-3">
                     <button
                         onClick={() => onSelectAction('prompt')}
@@ -52,8 +54,8 @@ const ContextualActionModal: React.FC<ContextualActionModalProps> = ({ onClose, 
                     >
                         <Edit className="text-cyan-400" />
                         <div>
-                            <h3 className="font-bold">僅加入提示</h3>
-                            <p className="text-xs text-gray-400">將選擇的提示附加到目前選取物件的文字提示區。</p>
+                            <h3 className="font-bold">{t('app.contextActionPromptTitle')}</h3>
+                            <p className="text-xs text-gray-400">{t('app.contextActionPromptDesc')}</p>
                         </div>
                     </button>
                     <button
@@ -62,8 +64,8 @@ const ContextualActionModal: React.FC<ContextualActionModalProps> = ({ onClose, 
                     >
                         <Group className="text-cyan-400" />
                         <div>
-                            <h3 className="font-bold">產生群組物件</h3>
-                            <p className="text-xs text-gray-400">建立包含圖片和提示的群組，並由AI提供更多改圖建議。</p>
+                            <h3 className="font-bold">{t('app.contextActionGroupTitle')}</h3>
+                            <p className="text-xs text-gray-400">{t('app.contextActionGroupDesc')}</p>
                         </div>
                     </button>
                     <button
@@ -72,13 +74,13 @@ const ContextualActionModal: React.FC<ContextualActionModalProps> = ({ onClose, 
                     >
                         <Wand2 className="text-cyan-400" />
                         <div>
-                            <h3 className="font-bold">直接自動生成</h3>
-                            <p className="text-xs text-gray-400">建立群組，由AI提供建議後，選擇一項直接生成新圖片。</p>
+                            <h3 className="font-bold">{t('app.contextActionGenerateTitle')}</h3>
+                            <p className="text-xs text-gray-400">{t('app.contextActionGenerateDesc')}</p>
                         </div>
                     </button>
                 </div>
                 <div className="flex justify-end mt-2">
-                    <button onClick={onClose} className="px-4 py-2 bg-rose-600 text-white rounded-md hover:bg-rose-500">取消</button>
+                    <button onClick={onClose} className="px-4 py-2 bg-rose-600 text-white rounded-md hover:bg-rose-500">{t('app.cancel')}</button>
                 </div>
             </div>
         </div>
@@ -86,6 +88,7 @@ const ContextualActionModal: React.FC<ContextualActionModalProps> = ({ onClose, 
 };
 
 export const App: React.FC = () => {
+    const { t } = useI18n();
     const {
         elements, setElements, undo, redo, canUndo, canRedo,
         viewport, setViewport,
@@ -395,19 +398,19 @@ export const App: React.FC = () => {
                 currentSelection = clickedElement ? [clickedElement] : [];
             }
     
-            items.push({ label: `複製 (${currentSelection.length})`, action: () => duplicateElements(currentSelection.map(el => el.id)) });
-            items.push({ label: `刪除 (${currentSelection.length})`, action: () => deleteElements(currentSelection.map(el => el.id)) });
+            items.push({ label: t('contextMenu.copy', { count: currentSelection.length }), action: () => duplicateElements(currentSelection.map(el => el.id)) });
+            items.push({ label: t('contextMenu.delete', { count: currentSelection.length }), action: () => deleteElements(currentSelection.map(el => el.id)) });
             items.push({ type: 'separator' });
-            items.push({ label: '移到最前', action: () => reorderElements('front', currentSelection.map(el => el.id)) });
-            items.push({ label: '移到最後', action: () => reorderElements('back', currentSelection.map(el => el.id)) });
+            items.push({ label: t('contextMenu.bringToFront'), action: () => reorderElements('front', currentSelection.map(el => el.id)) });
+            items.push({ label: t('contextMenu.sendToBack'), action: () => reorderElements('back', currentSelection.map(el => el.id)) });
     
             if (currentSelection.length > 1) {
                 const firstGroupId = currentSelection[0].groupId;
                 const isGrouped = firstGroupId && currentSelection.every(el => el.groupId === firstGroupId);
                 if (isGrouped) {
-                    items.push({ label: '解除群組', action: handleUngroup });
+                    items.push({ label: t('contextMenu.ungroup'), action: handleUngroup });
                 } else {
-                    items.push({ label: '建立群組', action: handleGroup });
+                    items.push({ label: t('contextMenu.group'), action: handleGroup });
                 }
             }
     
@@ -415,44 +418,44 @@ export const App: React.FC = () => {
                 const el = currentSelection[0];
                 items.push({ type: 'separator' });
                 if (el.type === 'image' || el.type === 'drawing') {
-                    items.push({ label: 'Inpaint (局部重繪)', action: () => { setInpaintingElement(el); setModalPrompt(''); } });
-                    items.push({ label: 'Outpaint (擴展)', action: () => { setOutpaintingElement(el); setModalPrompt(''); } });
-                    items.push({ label: '下載', action: () => musicHandlers.downloadImageElement(el.id) });
+                    items.push({ label: t('contextMenu.inpaint'), action: () => { setInpaintingElement(el); setModalPrompt(''); } });
+                    items.push({ label: t('contextMenu.outpaint'), action: () => { setOutpaintingElement(el); setModalPrompt(''); } });
+                    items.push({ label: t('contextMenu.download'), action: () => musicHandlers.downloadImageElement(el.id) });
                 }
                 if (el.type === 'imageCompare') {
                     if (el.wasInpainted) {
-                        items.push({ label: 'Inpaint (局部重繪)', action: () => { setInpaintingElement(el); setModalPrompt(el.inpaintedPrompt || ''); } });
+                        items.push({ label: t('contextMenu.inpaint'), action: () => { setInpaintingElement(el); setModalPrompt(el.inpaintedPrompt || ''); } });
                     }
                     if (el.srcAfter) {
-                        items.push({ label: '下載生成圖', action: () => musicHandlers.downloadImage(el.srcAfter, `compare-after-${el.id}.png`) });
+                        items.push({ label: t('contextMenu.downloadGenerated'), action: () => musicHandlers.downloadImage(el.srcAfter, `compare-after-${el.id}.png`) });
                     }
                 }
                 if (el.type === 'drawing') {
-                    items.push({ label: '編輯繪圖', action: () => setDrawingToEdit(el as DrawingElement) });
+                    items.push({ label: t('contextMenu.editDrawing'), action: () => setDrawingToEdit(el as DrawingElement) });
                 }
             }
         } else {
             handleSelectElements([]);
-            items.push({ label: '新增便籤 (N)', action: addNote });
-            items.push({ label: '新增圖片 (U)', action: addImageFromUpload });
-            items.push({ label: '新增箭頭 (A)', action: () => setActiveTool('arrow') });
-            items.push({ label: '繪圖 (D)', action: () => setIsDrawing(true) });
-            items.push({ label: '攝像頭 (C)', action: () => setIsTakingPhoto(true) });
+            items.push({ label: t('contextMenu.addNote'), action: addNote });
+            items.push({ label: t('contextMenu.addImage'), action: addImageFromUpload });
+            items.push({ label: t('contextMenu.addArrow'), action: () => setActiveTool('arrow') });
+            items.push({ label: t('contextMenu.draw'), action: () => setIsDrawing(true) });
+            items.push({ label: t('contextMenu.camera'), action: () => setIsTakingPhoto(true) });
             items.push({ type: 'separator' });
-            items.push({ label: '新增Inpaint物件 (I)', action: addInpaintPlaceholder });
-            items.push({ label: '新增Outpaint物件 (O)', action: addOutpaintPlaceholder });
-            items.push({ label: '新增空圖層 (P)', action: addPlaceholder });
-            items.push({ label: '新增比較物件 (X)', action: addImageCompare });
+            items.push({ label: t('contextMenu.addInpaint'), action: addInpaintPlaceholder });
+            items.push({ label: t('contextMenu.addOutpaint'), action: addOutpaintPlaceholder });
+            items.push({ label: t('contextMenu.addPlaceholder'), action: addPlaceholder });
+            items.push({ label: t('contextMenu.addCompare'), action: addImageCompare });
         }
     
         if (items.length > 0 && items[items.length - 1].type !== 'separator') {
             items.push({ type: 'separator' });
         }
-        items.push({ label: '貼上', action: () => handlePaste() });
-        items.push({ label: '螢幕截圖', action: () => setIsCapturing(true) });
+        items.push({ label: t('contextMenu.paste'), action: () => handlePaste() });
+        items.push({ label: t('contextMenu.screenshot'), action: () => setIsCapturing(true) });
         items.push({ type: 'separator' });
-        items.push({ label: '復原', action: undo, disabled: !canUndo });
-        items.push({ label: '重做', action: redo, disabled: !canRedo });
+        items.push({ label: t('contextMenu.undo'), action: undo, disabled: !canUndo });
+        items.push({ label: t('contextMenu.redo'), action: redo, disabled: !canRedo });
     
         setContextMenu({ x: e.clientX, y: e.clientY, items });
     };
@@ -689,8 +692,8 @@ export const App: React.FC = () => {
           addNote,
           addArrow: () => setActiveTool('arrow'),
           addImage: addImageFromUpload,
-          addInpaintPlaceholder,
-          addOutpaintPlaceholder,
+          addInpaint: addInpaintPlaceholder,
+          addOutpaint: addOutpaintPlaceholder,
           addPlaceholder,
           draw: () => setIsDrawing(true),
           camera: () => setIsTakingPhoto(true),

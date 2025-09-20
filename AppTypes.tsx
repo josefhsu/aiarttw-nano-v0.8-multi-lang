@@ -1,4 +1,5 @@
 import type { CanvasElement, NoteElement, ImageElement, DrawingElement, ArrowElement, PlaceholderElement, ImageCompareElement, InpaintPlaceholderElement, OutpaintPlaceholderElement } from './types';
+import { getLocaleObject } from './constants-i18n';
 
 export type AddElementFn = {
     (element: Omit<NoteElement, 'id' | 'zIndex'>, sourcePrompt?: string): CanvasElement;
@@ -14,37 +15,38 @@ export type AddElementFn = {
 export const getInitialElements = (): NoteElement[] => {
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
+    const initialStrings = getLocaleObject('zh-TW').app; // Default to zh-TW on first load
 
     return [
     {
         id: 'initial-note-1', type: 'note', zIndex: 1, rotation: 0,
         position: { x: centerX - 100, y: centerY - 370 }, width: 230, height: 230,
-        content: '歡迎來到\n鳥巢AI包娜娜\n創意畫布！', color: 'linear-gradient(135deg, #00f5d4, #9d00ff)', fontSize: 24
+        content: initialStrings.initialNote1, color: 'linear-gradient(135deg, #00f5d4, #9d00ff)', fontSize: 24
     },
     {
         id: 'initial-note-2', type: 'note', zIndex: 2, rotation: 3,
         position: { x: centerX - 300, y: centerY - 100 }, width: 200, height: 200,
-        content: '按Tab鍵，開合常用面板\n按空白鍵，平移畫布\n按右鍵，出現快速選單\n其他快捷鍵請看右側', color: 'var(--cyber-pink)', fontSize: 16
+        content: initialStrings.initialNote2, color: 'var(--cyber-pink)', fontSize: 16
     },
     {
         id: 'initial-note-3', type: 'note', zIndex: 3, rotation: -2,
         position: { x: centerX, y: centerY -50 }, width: 250, height: 200,
-        content: '2025歡迎邀約鳥巢AI\n想學最新AI生成影音工具\n企業想找AI工具顧問\n\n歡迎找鳥巢AI\n', color: 'var(--cyber-purple)', fontSize: 16
+        content: initialStrings.initialNote3, color: 'var(--cyber-purple)', fontSize: 16
     },
      {
         id: 'initial-note-4', type: 'note', zIndex: 4, rotation: -1,
         position: { x: centerX + 50, y: centerY + 130}, width: 250, height: 50,
-        content: 'https://aiarttw.us/contact', color: 'var(--cyber-purple)', fontSize: 16
+        content: initialStrings.initialNote4, color: 'var(--cyber-purple)', fontSize: 16
     },
      {
         id: 'initial-note-5', type: 'note', zIndex: 5, rotation: 0,
         position: { x: centerX -250, y: centerY + 200}, width: 250, height: 100,
-        content: '鳥巢AI包娜娜主題曲', color: 'transparent', fontSize: 16
+        content: initialStrings.initialNote5, color: 'transparent', fontSize: 16
     },
     {
         id: 'initial-note-6', type: 'note', zIndex: 6, rotation: 2,
         position: { x: centerX -260, y: centerY + 230}, width: 250, height: 100,
-        content: 'https://aiarttw.us/nb', color: 'transparent', fontSize: 16
+        content: initialStrings.initialNote6, color: 'transparent', fontSize: 16
     }
 ]};
 

@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import type { Point } from '../types';
+import { useI18n } from '../hooks/useI18n';
 
 interface CaptureBoxProps {
   onCapture: (box: { x: number; y: number; width: number; height: number }) => void;
@@ -18,6 +19,7 @@ const aspectRatios = [
 ];
 
 export const CaptureBox: React.FC<CaptureBoxProps> = ({ onCapture, onCancel }) => {
+  const { t } = useI18n();
   const [box, setBox] = useState({
     x: window.innerWidth / 2 - 250,
     y: window.innerHeight / 2 - 150,
@@ -115,21 +117,19 @@ export const CaptureBox: React.FC<CaptureBoxProps> = ({ onCapture, onCancel }) =
           <ResizeHandle position="tr" onMouseDown={(e) => handleMouseDown(e, 'resize-tr')} />
           <ResizeHandle position="bl" onMouseDown={(e) => handleMouseDown(e, 'resize-bl')} />
           <ResizeHandle position="br" onMouseDown={(e) => handleMouseDown(e, 'resize-br')} />
-       </div>
-       <div 
-          className="absolute z-60 p-2 bg-slate-900/80 rounded-lg flex items-center gap-2 border border-[var(--cyber-border)]"
-          style={{ left: box.x + box.width / 2, top: box.y + box.height + 15, transform: 'translateX(-50%)' }}
-       >
-          <div className="flex items-center gap-1.5 flex-wrap">
-              {aspectRatios.map(ratio => (
-                  <button key={ratio.text} onClick={() => setAspect(ratio.value)} className={`px-2 py-0.5 text-xs rounded ${aspect.toFixed(2) === ratio.value.toFixed(2) ? 'bg-[var(--cyber-cyan)] text-black' : 'bg-slate-700 text-gray-300'}`}>
-                      {ratio.text}
-                  </button>
+          <div className="absolute bottom-[-80px] left-1/2 -translate-x-1/2 bg-slate-800/80 p-2 rounded-lg flex flex-col items-center gap-2">
+            <div className='flex items-center gap-2'>
+              {aspectRatios.map(ar => (
+                <button key={ar.text} onClick={(e) => { e.stopPropagation(); setAspect(ar.value); }} className={`px-3 py-1 text-xs rounded-md ${aspect.toFixed(4) === ar.value.toFixed(4) ? 'bg-[var(--cyber-cyan)] text-black' : 'bg-slate-700 text-gray-300'}`}>
+                  {ar.text}
+                </button>
               ))}
+            </div>
+            <div className="flex items-center gap-2">
+                <button onClick={handleConfirm} className="px-4 py-2 bg-[var(--cyber-cyan)] text-black font-bold rounded-md hover:bg-cyan-300">{t('captureBox.confirm')}</button>
+                <button onClick={onCancel} className="px-4 py-2 bg-slate-700 text-gray-200 rounded-md hover:bg-slate-600">{t('captureBox.cancel')}</button>
+            </div>
           </div>
-          <div className="w-px h-6 bg-slate-700 mx-1" />
-          <button onClick={handleConfirm} className="px-3 py-1 bg-cyan-600 text-white rounded hover:bg-cyan-500">確認</button>
-          <button onClick={onCancel} className="px-3 py-1 bg-slate-700 text-gray-200 rounded hover:bg-slate-600">取消</button>
        </div>
     </div>
   );

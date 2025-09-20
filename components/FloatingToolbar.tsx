@@ -4,6 +4,7 @@ import { AdvancedColorPicker } from './ColorPicker';
 import type { CanvasElement, NoteElement, ImageElement, DrawingElement, Viewport, ArrowElement, Point, ImageCompareElement } from '../types';
 import { getElementsBounds } from '../utils';
 import { ART_STYLES, ASPECT_RATIO_OPTIONS } from '../constants';
+import { useI18n } from '../hooks/useI18n';
 
 interface IconButtonProps {
   title: string;
@@ -69,6 +70,7 @@ const IconButton: React.FC<IconButtonProps> =
 export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({ 
     elements, selectedElements, viewport, prompts, onPromptsChange, aspectRatios, onAspectRatiosChange, artStyles, onArtStylesChange, onDelete, onDuplicate, onBringToFront, onSendToBack, onGroup, onUngroup, onUpdateElements, onCommitHistory, onOutpaint, onInpaint, onEditDrawing, onDownload, onAIGenerate, onAIZoomOut, onAIGroupGenerate, onRequestInspiration, onRequestGroupInspiration, onOptimizeGroupPrompt, onOptimizeSingleElementPrompt, onNoteInspiration, onNoteOptimization, onNoteGenerate, onCreateComparison, onConvertToComparison, onUnpackComparison, isGenerating, onStartConnection, onToggleGroupLock, lockedGroupIds, onClearConnections, onFillPlaceholderFromCamera, onFillPlaceholderFromPaste, onOpenLightbox, onAddLayerToGroup
 }) => {
+  const { t } = useI18n();
   const promptContainerRef = useRef<HTMLDivElement>(null);
   const promptEditableRef = useRef<HTMLDivElement>(null);
   const [manualPromptContainerHeight, setManualPromptContainerHeight] = useState<number | null>(null);
@@ -320,16 +322,16 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     if (isMultiSelectionWithoutGroup) {
         return (
             <div className="flex items-center gap-2 justify-center">
-                <IconButton title="水平攤開" onClick={handleHorizontalSpread} disabled={selectedElements.length < 2}><AlignHorizontalSpaceAround size={18} /></IconButton>
+                <IconButton title={t('floatingToolbar.horizontalSpread')} onClick={handleHorizontalSpread} disabled={selectedElements.length < 2}><AlignHorizontalSpaceAround size={18} /></IconButton>
                 <div className="w-px h-6 bg-slate-700 mx-1" />
-                <IconButton title="移到最前 (Cmd/Ctrl+])" onClick={onBringToFront}><ArrowUpToLine size={18} /></IconButton>
-                <IconButton title="移到最後 (Cmd/Ctrl+[)" onClick={onSendToBack}><ArrowDownToLine size={18} /></IconButton>
-                <IconButton title="複製 (Cmd/Ctrl+D)" onClick={onDuplicate}><Copy size={18} /></IconButton>
-                <IconButton title="刪除 (Delete)" onClick={onDelete}><Trash2 size={18} /></IconButton>
+                <IconButton title={t('floatingToolbar.bringToFront')} onClick={onBringToFront}><ArrowUpToLine size={18} /></IconButton>
+                <IconButton title={t('floatingToolbar.sendToBack')} onClick={onSendToBack}><ArrowDownToLine size={18} /></IconButton>
+                <IconButton title={t('floatingToolbar.duplicate')} onClick={onDuplicate}><Copy size={18} /></IconButton>
+                <IconButton title={t('floatingToolbar.delete')} onClick={onDelete}><Trash2 size={18} /></IconButton>
                 <div className="w-px h-6 bg-slate-700 mx-1" />
-                <div className="flex items-center gap-2 text-xs text-gray-400 mr-2"><Group size={16}/>群組 ({selectedElements.length})</div>
-                <IconButton title="建立並鎖定群組 (Cmd/Ctrl+G)" onClick={onGroup}><Group size={18} /></IconButton>
-                <span className="text-xs text-cyan-400 animate-pulse">鎖定才能群組生成</span>
+                <div className="flex items-center gap-2 text-xs text-gray-400 mr-2"><Group size={16}/>{t('floatingToolbar.groupItems', { count: selectedElements.length })}</div>
+                <IconButton title={t('floatingToolbar.createAndLockGroup')} onClick={onGroup}><Group size={18} /></IconButton>
+                <span className="text-xs text-cyan-400 animate-pulse">{t('floatingToolbar.lockToGenerate')}</span>
             </div>
         );
     }
@@ -337,15 +339,15 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     if (isPlaceholder && element) {
         return (
             <div className="flex items-center gap-2 justify-center">
-                <span className="text-sm text-gray-400">填入圖片來源:</span>
-                <IconButton title="使用攝像頭" onClick={() => onFillPlaceholderFromCamera(element.id)}>
+                <span className="text-sm text-gray-400">{t('imageCompare.paste')}:</span>
+                <IconButton title={t('imageCompare.camera')} onClick={() => onFillPlaceholderFromCamera(element.id)}>
                     <Camera size={18} />
                 </IconButton>
-                <IconButton title="從剪貼簿貼上" onClick={() => onFillPlaceholderFromPaste(element.id)}>
+                <IconButton title={t('imageCompare.paste')} onClick={() => onFillPlaceholderFromPaste(element.id)}>
                     <ClipboardPaste size={18} />
                 </IconButton>
                 <div className="w-px h-6 bg-slate-700 mx-1" />
-                <IconButton title="刪除 (Delete)" onClick={onDelete}><Trash2 size={18} /></IconButton>
+                <IconButton title={t('floatingToolbar.delete')} onClick={onDelete}><Trash2 size={18} /></IconButton>
             </div>
         );
     }
@@ -357,55 +359,55 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
     return (
         <div className="w-full flex flex-col gap-2">
             <div className="relative flex items-center justify-between px-6">
-                {showPorts && <div className="node-port" style={{ left: -8 }} title="連接點 (連點兩下清除連接)" onMouseDown={(e) => { e.stopPropagation(); element && onStartConnection(element.id, 'left'); }} onDoubleClick={(e) => { e.stopPropagation(); element && onClearConnections(element.id); }} />}
+                {showPorts && <div className="node-port" style={{ left: -8 }} title={t('floatingToolbar.connectionPoint')} onMouseDown={(e) => { e.stopPropagation(); element && onStartConnection(element.id, 'left'); }} onDoubleClick={(e) => { e.stopPropagation(); element && onClearConnections(element.id); }} />}
                 
                 <div className="flex items-center gap-1">
-                    {selectedElements.length > 1 && <IconButton title="水平攤開" onClick={handleHorizontalSpread}><AlignHorizontalSpaceAround size={18} /></IconButton>}
+                    {selectedElements.length > 1 && <IconButton title={t('floatingToolbar.horizontalSpread')} onClick={handleHorizontalSpread}><AlignHorizontalSpaceAround size={18} /></IconButton>}
                     <div className="w-px h-6 bg-slate-700 mx-1" />
-                    <IconButton title="移到最前 (Cmd/Ctrl+])" onClick={onBringToFront}><ArrowUpToLine size={18} /></IconButton>
-                    <IconButton title="移到最後 (Cmd/Ctrl+[)" onClick={onSendToBack}><ArrowDownToLine size={18} /></IconButton>
-                    <IconButton title="複製 (Cmd/Ctrl+D)" onClick={onDuplicate}><Copy size={18} /></IconButton>
-                    <IconButton title="刪除 (Delete)" onClick={onDelete}><Trash2 size={18} /></IconButton>
-                    <IconButton title="新增空圖層" onClick={() => onAddLayerToGroup(groupId || element!.id)}><AddLayerIcon size={18} /></IconButton>
+                    <IconButton title={t('floatingToolbar.bringToFront')} onClick={onBringToFront}><ArrowUpToLine size={18} /></IconButton>
+                    <IconButton title={t('floatingToolbar.sendToBack')} onClick={onSendToBack}><ArrowDownToLine size={18} /></IconButton>
+                    <IconButton title={t('floatingToolbar.duplicate')} onClick={onDuplicate}><Copy size={18} /></IconButton>
+                    <IconButton title={t('floatingToolbar.delete')} onClick={onDelete}><Trash2 size={18} /></IconButton>
+                    <IconButton title={t('floatingToolbar.addEmptyLayer')} onClick={() => onAddLayerToGroup(groupId || element!.id)}><AddLayerIcon size={18} /></IconButton>
                     {isGroupSelection && (
                         <>
                           <div className="w-px h-6 bg-slate-700 mx-1" />
                            {isLocked ? (
-                                <IconButton title="解鎖群組" onClick={() => groupId && onToggleGroupLock(groupId)}><Unlock size={18} /></IconButton>
+                                <IconButton title={t('floatingToolbar.unlockGroup')} onClick={() => groupId && onToggleGroupLock(groupId)}><Unlock size={18} /></IconButton>
                            ) : (
-                                <IconButton title="鎖定群組" onClick={() => groupId && onToggleGroupLock(groupId)} className="lock-icon-glow"><Lock size={18} /></IconButton>
+                                <IconButton title={t('floatingToolbar.lockGroup')} onClick={() => groupId && onToggleGroupLock(groupId)} className="lock-icon-glow"><Lock size={18} /></IconButton>
                            )}
-                           <IconButton title="解散群組 (Cmd/Ctrl+Shift+G)" onClick={onUngroup}><Ungroup size={18} /></IconButton>
+                           <IconButton title={t('floatingToolbar.ungroup')} onClick={onUngroup}><Ungroup size={18} /></IconButton>
                         </>
                     )}
                     {isLocked && groupId && (
                         <>
                             <div className="w-px h-6 bg-slate-700 mx-1" />
-                            <div className="flex items-center gap-2 text-xs text-pink-400"><Lock size={16}/>已鎖定</div>
+                            <div className="flex items-center gap-2 text-xs text-pink-400"><Lock size={16}/>{t('floatingToolbar.locked')}</div>
                         </>
                     )}
                 </div>
                 
                 <div className="flex items-center gap-1">
-                    {(isImage || isDrawing) && <IconButton title="下載" onClick={() => element && onDownload(element.id)}><Download size={18} /></IconButton>}
-                    {(isImage || isDrawing) && <IconButton title="建立比較" onClick={() => element && onConvertToComparison(element.id)}><GitCompare size={18} /></IconButton>}
-                    {isImageCompare && <IconButton title="解開比較" onClick={() => element && onUnpackComparison(element.id)}><Unlink size={18} /></IconButton>}
-                    {canOpenLightbox && <IconButton title="放大檢視" onClick={() => element && onOpenLightbox(element.id)}><Eye size={18} /></IconButton>}
-                    {(isImage || isDrawing) && <IconButton title="AI 擴展 (Zoom Out)" onClick={() => element && onAIZoomOut(element.id)}><Expand size={18} /></IconButton>}
-                    {canInpaint && <IconButton title="Inpaint" onClick={onInpaint}><Brush size={18} /></IconButton>}
-                    {(isImage || isDrawing) && <IconButton title="Outpaint / Crop (Alt+C)" onClick={onOutpaint}><Crop size={18} /></IconButton>}
-                    {isDrawing && <IconButton title="編輯繪圖 (Alt+E)" onClick={onEditDrawing}><Edit size={18} /></IconButton>}
+                    {(isImage || isDrawing) && <IconButton title={t('floatingToolbar.download')} onClick={() => element && onDownload(element.id)}><Download size={18} /></IconButton>}
+                    {(isImage || isDrawing) && <IconButton title={t('floatingToolbar.createComparison')} onClick={() => element && onConvertToComparison(element.id)}><GitCompare size={18} /></IconButton>}
+                    {isImageCompare && <IconButton title={t('floatingToolbar.unpackComparison')} onClick={() => element && onUnpackComparison(element.id)}><Unlink size={18} /></IconButton>}
+                    {canOpenLightbox && <IconButton title={t('floatingToolbar.viewLarger')} onClick={() => element && onOpenLightbox(element.id)}><Eye size={18} /></IconButton>}
+                    {(isImage || isDrawing) && <IconButton title={t('floatingToolbar.aiZoomOut')} onClick={() => element && onAIZoomOut(element.id)}><Expand size={18} /></IconButton>}
+                    {canInpaint && <IconButton title={t('floatingToolbar.inpaint')} onClick={onInpaint}><Brush size={18} /></IconButton>}
+                    {(isImage || isDrawing) && <IconButton title={t('floatingToolbar.outpaint')} onClick={onOutpaint}><Crop size={18} /></IconButton>}
+                    {isDrawing && <IconButton title={t('floatingToolbar.editDrawing')} onClick={onEditDrawing}><Edit size={18} /></IconButton>}
                     {canCompare && (
                       <div className="flex items-center gap-1 p-1 rounded-md compare-feature-glow ml-2">
-                          <span className="text-xs font-bold pl-1">比較圖片</span>
-                          <IconButton title="建立比較" onClick={() => groupId && onCreateComparison(groupId)} className="!p-1">
+                          <span className="text-xs font-bold pl-1">{t('floatingToolbar.compareImages')}</span>
+                          <IconButton title={t('floatingToolbar.createComparison')} onClick={() => groupId && onCreateComparison(groupId)} className="!p-1">
                               <GitCompare size={18} />
                           </IconButton>
                       </div>
                     )}
                 </div>
 
-                {showPorts && <div className="node-port" style={{ right: -8 }} title="連接點 (連點兩下清除連接)" onMouseDown={(e) => { e.stopPropagation(); element && onStartConnection(element.id, 'right'); }} onDoubleClick={(e) => { e.stopPropagation(); element && onClearConnections(element.id); }} />}
+                {showPorts && <div className="node-port" style={{ right: -8 }} title={t('floatingToolbar.connectionPoint')} onMouseDown={(e) => { e.stopPropagation(); element && onStartConnection(element.id, 'right'); }} onDoubleClick={(e) => { e.stopPropagation(); element && onClearConnections(element.id); }} />}
             </div>
 
             {(isArrow && element) && (
@@ -414,7 +416,7 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
                     <div className="px-4 flex items-center justify-center gap-4 py-2">
                         <AdvancedColorPicker selectedColor={element.color} onColorChange={(color) => onUpdateElements([{ id: element.id, data: { color } }])} />
                         <div className="flex items-center gap-2 text-sm text-gray-300 flex-grow" style={{ minWidth: 150 }}>
-                            <span>粗細</span>
+                            <span>{t('floatingToolbar.stroke')}</span>
                             <input type="range" min="1" max="50" value={element.strokeWidth}
                                    onChange={e => onUpdateElements([{ id: element.id, data: { strokeWidth: parseInt(e.target.value) } }])}
                                    className="w-full"
@@ -444,9 +446,9 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
                             </div>
 
                              <div className="flex items-center gap-2 text-sm text-gray-300">
-                                <IconButton title="縮小字體" onClick={() => onUpdateElements([{ id: element.id, data: { fontSize: Math.max(8, (element as NoteElement).fontSize - 2) } }])}><Minus size={16} /></IconButton>
+                                <IconButton title={t('floatingToolbar.decreaseFontSize')} onClick={() => onUpdateElements([{ id: element.id, data: { fontSize: Math.max(8, (element as NoteElement).fontSize - 2) } }])}><Minus size={16} /></IconButton>
                                 <span>{(element as NoteElement).fontSize}px</span>
-                                <IconButton title="放大字體" onClick={() => onUpdateElements([{ id: element.id, data: { fontSize: Math.min(128, (element as NoteElement).fontSize + 2) } }])}><Plus size={16} /></IconButton>
+                                <IconButton title={t('floatingToolbar.increaseFontSize')} onClick={() => onUpdateElements([{ id: element.id, data: { fontSize: Math.min(128, (element as NoteElement).fontSize + 2) } }])}><Plus size={16} /></IconButton>
                             </div>
                         </div>
                          <select
@@ -456,20 +458,20 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
                             className="flex-grow bg-slate-800 p-1.5 rounded-md text-sm text-gray-200 focus:ring-1 focus:ring-[var(--cyber-cyan)] outline-none min-w-0 mt-2"
                         >
                             {ART_STYLES.map(style => (
-                                <option key={style} value={style}>{style}</option>
+                                <option key={style} value={style}>{t(`artStyles.${style}`)}</option>
                             ))}
                         </select>
                         <div className="flex items-center gap-2 pt-2 mt-2 border-t border-slate-700/50">
-                            <IconButton title="靈感提示 (Alt+I)" onClick={() => onNoteInspiration(element.id)}><Lightbulb size={18}/></IconButton>
-                            <IconButton title="自動優化 (Alt+P)" onClick={() => onNoteOptimization(element.id)}><Sparkles size={18}/></IconButton>
+                            <IconButton title={t('floatingToolbar.inspiration')} onClick={() => onNoteInspiration(element.id)}><Lightbulb size={18}/></IconButton>
+                            <IconButton title={t('floatingToolbar.optimize')} onClick={() => onNoteOptimization(element.id)}><Sparkles size={18}/></IconButton>
                             <button 
                                 onClick={() => onNoteGenerate(element.id)}
                                 disabled={isGenerating}
-                                title="從便籤內容生成圖片"
+                                title={t('floatingToolbar.generateFromNote')}
                                 className="flex-grow flex items-center justify-center gap-1.5 px-3 py-1.5 bg-[var(--cyber-cyan)] text-black font-bold rounded-md text-sm hover:bg-cyan-300 disabled:bg-slate-600 disabled:cursor-not-allowed"
                             >
                                 <Wand2 size={14} />
-                                {isGenerating ? '生成中...' : '生成'}
+                                {isGenerating ? t('floatingToolbar.generating') : t('floatingToolbar.generate')}
                             </button>
                         </div>
                     </div>
@@ -509,18 +511,18 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
                                 <div className="flex flex-col">
                                     {element && canEditAI && (
                                         <>
-                                            <IconButton title="靈感提示 (Alt+I)" onClick={() => onRequestInspiration(element.id)}><Lightbulb size={18}/></IconButton>
-                                            <IconButton title="優化提示 (Alt+P)" onClick={() => onOptimizeSingleElementPrompt(element.id)}><Sparkles size={18}/></IconButton>
-                                            <IconButton title="拷貝提示" onClick={handleCopyPrompt}><ClipboardCopy size={18} /></IconButton>
-                                            <IconButton title="清除提示" onClick={() => element && onPromptsChange(p => ({...p, [element.id]: ''}))}><Eraser size={18} /></IconButton>
+                                            <IconButton title={t('floatingToolbar.inspiration')} onClick={() => onRequestInspiration(element.id)}><Lightbulb size={18}/></IconButton>
+                                            <IconButton title={t('floatingToolbar.optimize')} onClick={() => onOptimizeSingleElementPrompt(element.id)}><Sparkles size={18}/></IconButton>
+                                            <IconButton title={t('floatingToolbar.copyPrompt')} onClick={handleCopyPrompt}><ClipboardCopy size={18} /></IconButton>
+                                            <IconButton title={t('floatingToolbar.clearPrompt')} onClick={() => element && onPromptsChange(p => ({...p, [element.id]: ''}))}><Eraser size={18} /></IconButton>
                                         </>
                                     )}
                                     {isGroupSelection && isLocked && groupId && (
                                         <>
-                                         <IconButton title="群組靈感提示 (Alt+I)" onClick={() => onRequestGroupInspiration(groupId)}><Lightbulb size={18}/></IconButton>
-                                         <IconButton title="優化提示 (Alt+P)" onClick={() => onOptimizeGroupPrompt(groupId)}><Sparkles size={18}/></IconButton>
-                                         <IconButton title="拷貝提示" onClick={handleCopyPrompt}><ClipboardCopy size={18} /></IconButton>
-                                         <IconButton title="清除提示" onClick={() => groupId && onPromptsChange(p => ({...p, [groupId]: ''}))}><Eraser size={18} /></IconButton>
+                                         <IconButton title={t('floatingToolbar.groupInspiration')} onClick={() => onRequestGroupInspiration(groupId)}><Lightbulb size={18}/></IconButton>
+                                         <IconButton title={t('floatingToolbar.optimize')} onClick={() => onOptimizeGroupPrompt(groupId)}><Sparkles size={18}/></IconButton>
+                                         <IconButton title={t('floatingToolbar.copyPrompt')} onClick={handleCopyPrompt}><ClipboardCopy size={18} /></IconButton>
+                                         <IconButton title={t('floatingToolbar.clearPrompt')} onClick={() => groupId && onPromptsChange(p => ({...p, [groupId]: ''}))}><Eraser size={18} /></IconButton>
                                         </>
                                     )}
                                 </div>
@@ -529,7 +531,7 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
                                 data-resizer="true"
                                 onMouseDown={handleTextareaResize}
                                 onDoubleClick={() => setManualPromptContainerHeight(null)}
-                                title="拖曳以調整大小 (雙擊重設)"
+                                title={t('floatingToolbar.resizeHandle')}
                                 className="h-2.5 cursor-ns-resize flex items-center justify-center group w-full flex-shrink-0"
                             >
                                 <div className="w-8 h-1 bg-slate-600 rounded-full group-hover:bg-cyan-400 transition-colors" />
@@ -541,7 +543,7 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
                             className="w-full bg-slate-800 p-1.5 rounded-md text-sm text-gray-200 focus:ring-1 focus:ring-[var(--cyber-cyan)] outline-none"
                         >
                             {ART_STYLES.map(style => (
-                                <option key={style} value={style}>{style}</option>
+                                <option key={style} value={style}>{t(`artStyles.${style}`)}</option>
                             ))}
                         </select>
                         <button 
@@ -550,7 +552,7 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
                             className="w-full flex items-center justify-center gap-2 mt-1 px-4 py-2 bg-[var(--cyber-cyan)] text-black font-bold rounded-md hover:bg-cyan-300 disabled:bg-slate-600 disabled:cursor-not-allowed"
                         >
                             <Wand2 size={16} />
-                            {isGenerating ? '生成中...' : '生成'}
+                            {isGenerating ? t('floatingToolbar.generating') : t('floatingToolbar.generate')}
                         </button>
                     </div>
                 </>

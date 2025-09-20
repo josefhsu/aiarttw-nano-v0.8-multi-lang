@@ -443,17 +443,9 @@ export const useCanvasHandlers = ({
                     intrinsicHeight: img.naturalHeight,
                     meta: placeholder.groupId ? {} : { autoInspire: true }
                 };
-                // FIX: Replaced .map() with findIndex and array spreading to work around a TypeScript
-                // type inference issue with discriminated unions that caused a compilation error.
-                setElements(prev => {
-                    const elementIndex = prev.findIndex(el => el.id === placeholderId);
-                    if (elementIndex === -1) {
-                        return prev;
-                    }
-                    const newElements = [...prev];
-                    newElements[elementIndex] = newImage;
-                    return newElements;
-                });
+                // FIX: Added an explicit return type to the map function to help TypeScript's inference engine
+                // with the complex discriminated union type of CanvasElement, preventing a type error.
+                setElements(prev => prev.map((el): CanvasElement => (el.id === placeholderId ? newImage : el)), { addToHistory: true });
                 setSelectedElementIds([placeholderId]);
             };
             img.src = e.target?.result as string;

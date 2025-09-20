@@ -3,18 +3,20 @@ import type { CanvasElement, NoteElement, Point } from '../types';
 import { ChevronDown, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
 import { HOT_APPLICATIONS, PROMPT_MAP, ULTIMATE_EDITING_GUIDE, RANDOM_GRADIENTS } from '../constants';
 import { UNIFIED_DIRECTOR_STYLES } from '../constants2';
+// FIX: Corrected imports to use the `_DATA` suffix as exported from constants1.ts.
 import {
     NCL_OPTIONS,
-    NIGHT_CITY_WEAPONS,
-    NIGHT_CITY_VEHICLES,
-    NIGHT_CITY_COMPANIONS,
+    NIGHT_CITY_WEAPONS_DATA as NIGHT_CITY_WEAPONS,
+    NIGHT_CITY_VEHICLES_DATA as NIGHT_CITY_VEHICLES,
+    NIGHT_CITY_COMPANIONS_DATA as NIGHT_CITY_COMPANIONS,
     NIGHT_CITY_COMPANION_PROMPTS,
     NIGHT_CITY_MISSIONS,
-    NIGHT_CITY_LEGENDS,
+    NIGHT_CITY_LEGENDS_DATA as NIGHT_CITY_LEGENDS,
     generateRandomNCLFullPrompt,
     generateRandomCharacterDescription,
 } from '../constants1';
 import { calculateNoteHeight } from '../utils';
+import { useI18n } from '../hooks/useI18n';
 
 type AddNoteFn = (element: Omit<NoteElement, 'id' | 'zIndex'>) => void;
 
@@ -185,6 +187,8 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
     addElement, screenToCanvas, canvasSize, elements, updateElements,
     onTriggerContextualAction
 }) => {
+    // FIX: Add useI18n hook to get the translation function.
+    const { t } = useI18n();
     const [activeMainTab, setActiveMainTab] = useState<'tools' | 'legends'>('tools');
     const [promptChoices, setPromptChoices] = useState<{ title: string; options: string[]; onConfirm: (choice: string) => void } | null>(null);
     const [isHotAppsExpanded, setIsHotAppsExpanded] = useState(false);
@@ -234,7 +238,8 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
         const selectedOptions: Record<string, string> = {};
         Object.entries(allCharOptions).forEach(([key, value]) => {
             const selectedValue = charSettings[key as keyof typeof charSettings];
-            if (selectedValue && selectedValue !== value.options[0] && selectedValue !== value.label) {
+            // FIX: Use t(value.labelKey) instead of non-existent `value.label` to get translated placeholder text for comparison.
+            if (selectedValue && selectedValue !== value.options[0] && selectedValue !== t(value.labelKey)) {
                 selectedOptions[key] = selectedValue;
             }
         });
@@ -367,22 +372,23 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
                                 </div>
                             </div>
 
-                            <CollapsibleSection title="終極改圖指南" defaultOpen={true}>
+                            {/* FIX: Replaced mapping logic to work with the object-based i18n structure for ULTIMATE_EDITING_GUIDE. */}
+                            <CollapsibleSection title={t('inspirationPanel.ultimateGuide')} defaultOpen={true}>
                                 <div className="w-full space-y-2 p-3">
-                                {ULTIMATE_EDITING_GUIDE.map(guide => (
-                                    <CollapsibleSection key={guide.category} title={guide.category} defaultOpen={false}>
+                                {Object.values(ULTIMATE_EDITING_GUIDE).map(guide => (
+                                    <CollapsibleSection key={guide.categoryKey} title={t(guide.categoryKey)} defaultOpen={false}>
                                         <div className="inspiration-section-body flex-col !items-stretch">
                                             {guide.items.map(item => (
-                                                 <button
-                                                    key={item.name}
+                                                    <button
+                                                    key={item.nameKey}
                                                     className="inspiration-btn !text-left !w-full"
-                                                    title={item.prompt}
-                                                    onClick={() => handleButtonClick(item.prompt)}
+                                                    title={t(item.promptKey)}
+                                                    onClick={() => handleButtonClick(t(item.promptKey))}
                                                 >
-                                                    {item.name}
+                                                    {t(item.nameKey)}
                                                 </button>
                                             ))}
-                                         </div>
+                                            </div>
                                     </CollapsibleSection>
                                 ))}
                                 </div>
@@ -415,11 +421,11 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
                                     <div className="inspiration-section-body !p-2 flex-col gap-2">
                                         <select onChange={(e) => handleDropdownSelect(e, 'weapons')} className="inspiration-btn w-full !text-xs !py-1.5">
                                             <option value="">選擇武器...</option>
-                                            {Object.entries(NIGHT_CITY_WEAPONS).map(([cat, items]) => <optgroup key={cat} label={cat}>{items.map(item => <option key={item} value={item}>{item}</option>)}</optgroup>)}
+                                            {Object.entries(NIGHT_CITY_WEAPONS).map(([cat, items]) => <optgroup key={cat} label={cat}>{(items as string[]).map(item => <option key={item} value={item}>{item}</option>)}</optgroup>)}
                                         </select>
                                         <select onChange={(e) => handleDropdownSelect(e, 'weapons')} className="inspiration-btn w-full !text-xs !py-1.5">
                                             <option value="">選擇載具...</option>
-                                            {Object.entries(NIGHT_CITY_VEHICLES).map(([cat, items]) => <optgroup key={cat} label={cat}>{items.map(item => <option key={item} value={item}>{item}</option>)}</optgroup>)}
+                                            {Object.entries(NIGHT_CITY_VEHICLES).map(([cat, items]) => <optgroup key={cat} label={cat}>{(items as string[]).map(item => <option key={item} value={item}>{item}</option>)}</optgroup>)}
                                         </select>
                                     </div>
                                 </CollapsibleSection>
@@ -427,7 +433,7 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
                                      <div className="inspiration-section-body !p-2 flex-col">
                                          <select onChange={handleCompanionSelect} className="inspiration-btn w-full !text-xs !py-1.5">
                                             <option value="">選擇夥伴...</option>
-                                            {Object.entries(NIGHT_CITY_COMPANIONS).map(([cat, items]) => <optgroup key={cat} label={cat}>{items.map(item => <option key={item} value={item}>{item}</option>)}</optgroup>)}
+                                            {Object.entries(NIGHT_CITY_COMPANIONS).map(([cat, items]) => <optgroup key={cat} label={cat}>{(items as string[]).map(item => <option key={item} value={item}>{item}</option>)}</optgroup>)}
                                         </select>
                                      </div>
                                 </CollapsibleSection>

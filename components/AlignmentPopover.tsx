@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import type { CanvasElement, Viewport, Point } from '../types';
 import { getElementsBounds } from '../utils';
+import { useI18n } from '../hooks/useI18n';
 
 interface AlignmentPopoverProps {
     anchorEl: HTMLDivElement | null;
@@ -33,6 +34,7 @@ const AlignButton: React.FC<{ title: string; onClick: () => void; disabled?: boo
 export const AlignmentPopover: React.FC<AlignmentPopoverProps> = ({
     anchorEl, onClose, selectedElements, canvasSize, viewport, screenToCanvas, onUpdateElements, onCommitHistory
 }) => {
+    const { t } = useI18n();
     const popoverRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -162,34 +164,34 @@ export const AlignmentPopover: React.FC<AlignmentPopoverProps> = ({
             onMouseDown={e => e.stopPropagation()}
         >
             <div className="flex flex-col gap-1">
-                <p className="text-xs text-gray-400 px-1">對齊物件</p>
+                <p className="text-xs text-gray-400 px-1">{t('alignmentPopover.alignObjects')}</p>
                 <div className="flex gap-1">
-                    <AlignButton title="靠左對齊" onClick={() => handleAlign('left')} disabled={selectedElements.length < 2}><AlignStartHorizontal size={18} /></AlignButton>
-                    <AlignButton title="水平置中" onClick={() => handleAlign('center-h')} disabled={selectedElements.length < 2}><AlignCenterHorizontal size={18} /></AlignButton>
-                    <AlignButton title="靠右對齊" onClick={() => handleAlign('right')} disabled={selectedElements.length < 2}><AlignEndHorizontal size={18} /></AlignButton>
+                    <AlignButton title={t('alignmentPopover.alignLeft')} onClick={() => handleAlign('left')} disabled={selectedElements.length < 2}><AlignStartHorizontal size={18} /></AlignButton>
+                    <AlignButton title={t('alignmentPopover.alignCenterH')} onClick={() => handleAlign('center-h')} disabled={selectedElements.length < 2}><AlignCenterHorizontal size={18} /></AlignButton>
+                    <AlignButton title={t('alignmentPopover.alignRight')} onClick={() => handleAlign('right')} disabled={selectedElements.length < 2}><AlignEndHorizontal size={18} /></AlignButton>
                     <div className="w-px bg-slate-600 mx-1" />
-                    <AlignButton title="靠上對齊" onClick={() => handleAlign('top')} disabled={selectedElements.length < 2}><AlignStartVertical size={18} /></AlignButton>
-                    <AlignButton title="垂直置中" onClick={() => handleAlign('center-v')} disabled={selectedElements.length < 2}><AlignCenterVertical size={18} /></AlignButton>
-                    <AlignButton title="靠下對齊" onClick={() => handleAlign('bottom')} disabled={selectedElements.length < 2}><AlignEndVertical size={18} /></AlignButton>
+                    <AlignButton title={t('alignmentPopover.alignTop')} onClick={() => handleAlign('top')} disabled={selectedElements.length < 2}><AlignStartVertical size={18} /></AlignButton>
+                    <AlignButton title={t('alignmentPopover.alignCenterV')} onClick={() => handleAlign('center-v')} disabled={selectedElements.length < 2}><AlignCenterVertical size={18} /></AlignButton>
+                    <AlignButton title={t('alignmentPopover.alignBottom')} onClick={() => handleAlign('bottom')} disabled={selectedElements.length < 2}><AlignEndVertical size={18} /></AlignButton>
                 </div>
             </div>
             <div className="flex flex-col gap-1">
-                <p className="text-xs text-gray-400 px-1">均分間距</p>
+                <p className="text-xs text-gray-400 px-1">{t('alignmentPopover.distribute')}</p>
                 <div className="flex gap-1">
-                    <AlignButton title="水平均分" onClick={() => handleDistribute('horizontal')} disabled={selectedElements.length < 3}><AlignHorizontalSpaceAround size={18} /></AlignButton>
-                    <AlignButton title="垂直均分" onClick={() => handleDistribute('vertical')} disabled={selectedElements.length < 3}><AlignVerticalSpaceAround size={18} /></AlignButton>
+                    <AlignButton title={t('alignmentPopover.distributeH')} onClick={() => handleDistribute('horizontal')} disabled={selectedElements.length < 3}><AlignHorizontalSpaceAround size={18} /></AlignButton>
+                    <AlignButton title={t('alignmentPopover.distributeV')} onClick={() => handleDistribute('vertical')} disabled={selectedElements.length < 3}><AlignVerticalSpaceAround size={18} /></AlignButton>
                 </div>
             </div>
             <div className="flex flex-col gap-1">
-                <p className="text-xs text-gray-400 px-1">對齊畫布</p>
+                <p className="text-xs text-gray-400 px-1">{t('alignmentPopover.alignToCanvas')}</p>
                 <div className="flex gap-1">
-                    <AlignButton title="對齊畫布左側" onClick={() => handleAlignToCanvas('left')}><PanelLeft size={18} /></AlignButton>
-                    <AlignButton title="對齊畫布水平中央" onClick={() => handleAlignToCanvas('center-h')}><PanelLeftClose size={18} /></AlignButton>
-                    <AlignButton title="對齊畫布右側" onClick={() => handleAlignToCanvas('right')}><PanelRight size={18} /></AlignButton>
+                    <AlignButton title={t('alignmentPopover.canvasLeft')} onClick={() => handleAlignToCanvas('left')}><PanelLeft size={18} /></AlignButton>
+                    <AlignButton title={t('alignmentPopover.canvasCenterH')} onClick={() => handleAlignToCanvas('center-h')}><PanelLeftClose size={18} /></AlignButton>
+                    <AlignButton title={t('alignmentPopover.canvasRight')} onClick={() => handleAlignToCanvas('right')}><PanelRight size={18} /></AlignButton>
                     <div className="w-px bg-slate-600 mx-1" />
-                    <AlignButton title="對齊畫布頂部" onClick={() => handleAlignToCanvas('top')}><PanelTop size={18} /></AlignButton>
-                    <AlignButton title="對齊畫布垂直中央" onClick={() => handleAlignToCanvas('center-v')}><PanelTopClose size={18} /></AlignButton>
-                    <AlignButton title="對齊畫布底部" onClick={() => handleAlignToCanvas('bottom')}><PanelBottom size={18} /></AlignButton>
+                    <AlignButton title={t('alignmentPopover.canvasTop')} onClick={() => handleAlignToCanvas('top')}><PanelTop size={18} /></AlignButton>
+                    <AlignButton title={t('alignmentPopover.canvasCenterV')} onClick={() => handleAlignToCanvas('center-v')}><PanelTopClose size={18} /></AlignButton>
+                    <AlignButton title={t('alignmentPopover.canvasBottom')} onClick={() => handleAlignToCanvas('bottom')}><PanelBottom size={18} /></AlignButton>
                 </div>
             </div>
         </div>

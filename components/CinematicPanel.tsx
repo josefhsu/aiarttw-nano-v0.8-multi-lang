@@ -1,5 +1,6 @@
 
 
+
 import React, { useState } from 'react';
 import type { CanvasElement, NoteElement, Point, PlaceholderElement } from '../types';
 import { ChevronDown, Film, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -8,6 +9,7 @@ import { FILM_EMULATION_STYLES } from '../constants5';
 import { RANDOM_GRADIENTS } from '../constants';
 import { calculateNoteHeight } from '../utils';
 import { v4 as uuidv4 } from 'uuid';
+import { useI18n } from '../hooks/useI18n';
 
 type AddElementsFn = (elements: Omit<CanvasElement, 'id' | 'zIndex'>[]) => void;
 
@@ -55,6 +57,7 @@ export const CinematicPanel: React.FC<CinematicPanelProps> = ({
     screenToCanvas,
     canvasSize
 }) => {
+    const { t } = useI18n();
     
     const handleButtonClick = (promptText: string) => {
         onTriggerContextualAction(promptText);
@@ -66,11 +69,11 @@ export const CinematicPanel: React.FC<CinematicPanelProps> = ({
         >
             <div className="inspiration-panel ml-4" style={{ maxHeight: 'calc(100vh - 9rem)' }}>
                 <div className="inspiration-panel-header">
-                    電影感
+                    {t('cinematicPanel.title')}
                 </div>
                 
                 <div className="inspiration-panel-content">
-                    <CollapsibleSection title="電影調色" defaultOpen={true}>
+                    <CollapsibleSection title={t('cinematicPanel.movieGrading')} defaultOpen={true}>
                         <div className="w-full space-y-2 p-3">
                             {CINEMATIC_STYLES.map(styleCat => (
                                 <CollapsibleSection key={styleCat.category} title={styleCat.category}>
@@ -88,7 +91,7 @@ export const CinematicPanel: React.FC<CinematicPanelProps> = ({
                             ))}
                         </div>
                     </CollapsibleSection>
-                    <CollapsibleSection title="底片調色" defaultOpen={true}>
+                    <CollapsibleSection title={t('cinematicPanel.filmGrading')} defaultOpen={true}>
                         <div className="w-full space-y-2 p-3">
                             {FILM_EMULATION_STYLES.map(styleCat => (
                                 <CollapsibleSection key={styleCat.category} title={styleCat.category}>
@@ -111,10 +114,10 @@ export const CinematicPanel: React.FC<CinematicPanelProps> = ({
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-12 h-24 bg-slate-900/80 backdrop-blur-md rounded-r-lg border-y border-r border-[var(--cyber-border)] flex flex-col items-center justify-center text-gray-400 hover:text-white transition-colors"
-                title="電影感"
+                title={t('cinematicPanel.toggle')}
             >
                 <Film size={20} className={`transition-transform duration-300 ${isOpen ? 'rotate-12' : ''}`} />
-                <span className={`mt-2 text-xs writing-mode-vertical-rl transition-transform duration-300 ${isOpen ? '-rotate-12' : ''}`}>電影感</span>
+                <span className={`mt-2 text-xs writing-mode-vertical-rl transition-transform duration-300 ${isOpen ? '-rotate-12' : ''}`}>{t('cinematicPanel.title')}</span>
                 {isOpen ? <ChevronLeft size={16} className="mt-2" /> : <ChevronRight size={16} className="mt-2" />}
             </button>
         </div>

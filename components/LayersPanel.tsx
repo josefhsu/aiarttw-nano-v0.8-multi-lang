@@ -1,6 +1,8 @@
 import React from 'react';
-import type { CanvasElement, NoteElement, ImageElement, DrawingElement } from '../types';
+import type { CanvasElement } from '../types';
 import { Trash2, Group, Layers, ChevronRight, ChevronLeft } from 'lucide-react';
+import { useI18n } from '../hooks/useI18n';
+import { Language, locales } from '../constants';
 
 interface LayersPanelProps {
   isOpen: boolean;
@@ -17,6 +19,32 @@ interface LayersPanelProps {
   isMusicPlayerVisible: boolean;
   onMusicPlayerToggle: () => void;
 }
+
+const LanguageSwitcher: React.FC = () => {
+    const { language, setLanguage } = useI18n();
+    const languages: Language[] = ['zh-TW', 'en', 'ja', 'ko'];
+
+    return (
+        <div className="flex-shrink-0 p-2 mt-auto border-t border-slate-700">
+            <div className="flex justify-around items-center">
+                {languages.map(lang => (
+                    <button
+                        key={lang}
+                        onClick={() => setLanguage(lang)}
+                        className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
+                            language === lang 
+                            ? 'bg-[var(--cyber-cyan)] text-black shadow-[0_0_8px_var(--cyber-glow-cyan)]' 
+                            : 'bg-slate-800 text-gray-400 hover:bg-slate-700 hover:text-white'
+                        }`}
+                    >
+                        {locales[lang].langName}
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 
 const LayerThumbnail: React.FC<{ element: CanvasElement }> = ({ element }) => {
     switch (element.type) {
@@ -45,6 +73,7 @@ const LayerThumbnail: React.FC<{ element: CanvasElement }> = ({ element }) => {
 };
 
 export const LayersPanel: React.FC<LayersPanelProps> = ({ isOpen, setIsOpen, elements, selectedElementIds, onLayerSelect, onGroupLayerSelect, lockedGroupIds, onDelete, onReorder, isAnimationActive, onAnimationToggle, isMusicPlayerVisible, onMusicPlayerToggle }) => {
+    const { t } = useI18n();
     const sortedElements = [...elements].sort((a, b) => b.zIndex - a.zIndex);
     
     const processedGroupIds = new Set<string>();
@@ -81,29 +110,29 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ isOpen, setIsOpen, ele
 
     return (
         <div 
-            className={`fixed top-4 right-4 h-[calc(100vh-2rem)] z-40 flex flex-row-reverse items-start transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-[calc(100%-3rem)]'}`}
+            className={`fixed top-4 right-4 z-40 flex flex-row-reverse items-start transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-[calc(100%-3rem)]'}`}
             onMouseLeave={() => setIsOpen(false)}
         >
-            <div className="w-64 h-full bg-slate-900/80 backdrop-blur-md rounded-lg shadow-2xl border border-[var(--cyber-border)] flex flex-col mr-4">
+            <div className="w-64 max-h-[calc(100vh-4rem)] bg-slate-900/80 backdrop-blur-md rounded-lg shadow-2xl border border-[var(--cyber-border)] flex flex-col mr-4">
                 <div className="flex justify-between items-center p-3 border-b border-slate-700 flex-shrink-0">
-                    <h3 className="text-lg font-bold text-[var(--cyber-cyan)]">圖層</h3>
+                    <h3 className="text-lg font-bold text-[var(--cyber-cyan)]">{t('layersPanel.title')}</h3>
                      <div className="flex items-center gap-2">
                         <button
                             onClick={onAnimationToggle}
                             className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${isAnimationActive ? 'bg-[var(--cyber-cyan)] text-black shadow-[0_0_8px_var(--cyber-glow-cyan)]' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
                         >
-                            動畫
+                            {t('layersPanel.animation')}
                         </button>
                         <button
                             onClick={onMusicPlayerToggle}
                             className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${isMusicPlayerVisible ? 'bg-[var(--cyber-pink)] text-black shadow-[0_0_8px_var(--cyber-glow-pink)]' : 'bg-slate-700 text-gray-300 hover:bg-slate-600'}`}
                         >
-                            音樂
+                            {t('layersPanel.music')}
                         </button>
                     </div>
                 </div>
                 <ul 
-                    className="overflow-y-auto p-2 space-y-1"
+                    className="overflow-y-auto p-2 space-y-1 flex-grow"
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => handleDrop(e, 0)} // Drop on empty space
                 >
@@ -122,7 +151,7 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ isOpen, setIsOpen, ele
                                     <div className="w-8 h-6 rounded border border-slate-500 flex-shrink-0 flex items-center justify-center">
                                         <Group size={16} className="text-pink-400" />
                                     </div>
-                                    <span className="truncate flex-1 font-bold text-pink-400">群組 ({item.elements.length})</span>
+                                    <span className="truncate flex-1 font-bold text-pink-400">{t('layersPanel.group')} {t('layersPanel.numItems', { count: item.elements.length })}</span>
                                     <div className="w-5 h-5" />
                                 </li>
                             );
@@ -152,6 +181,7 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ isOpen, setIsOpen, ele
                         }
                     })}
                 </ul>
+                <LanguageSwitcher />
             </div>
             <div
                 onMouseEnter={() => setIsOpen(true)}
@@ -160,10 +190,10 @@ export const LayersPanel: React.FC<LayersPanelProps> = ({ isOpen, setIsOpen, ele
                 <button
                     onClick={() => setIsOpen(false)}
                     className="w-12 h-24 bg-slate-900/80 backdrop-blur-md rounded-l-lg border-y border-l border-[var(--cyber-border)] flex flex-col items-center justify-center text-gray-400 hover:text-white transition-colors"
-                    title="圖層"
+                    title={t('layersPanel.toggle')}
                 >
                     <Layers size={20} className={`transition-transform duration-300 ${isOpen ? 'rotate-12' : ''}`} />
-                    <span className={`mt-2 text-xs writing-mode-vertical-rl transition-transform duration-300 ${isOpen ? '-rotate-12' : ''}`}>圖層</span>
+                    <span className={`mt-2 text-xs writing-mode-vertical-rl transition-transform duration-300 ${isOpen ? '-rotate-12' : ''}`}>{t('layersPanel.title')}</span>
                     {isOpen ? <ChevronRight size={16} className="mt-2" /> : <ChevronLeft size={16} className="mt-2" />}
                 </button>
             </div>

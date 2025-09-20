@@ -1,20 +1,23 @@
 import React, { useState } from 'react';
 import type { CanvasElement, NoteElement, Point } from '../types';
 import { ChevronDown, Lightbulb, ChevronLeft, ChevronRight } from 'lucide-react';
-import { HOT_APPLICATIONS, PROMPT_MAP, ULTIMATE_EDITING_GUIDE, RANDOM_GRADIENTS } from '../constants';
+// FIX: Changed import from ULTIMATE_EDITING_GUIDE_KEYS to ULTIMATE_EDITING_GUIDE
+import { HOT_APPLICATIONS, PROMPT_MAP, RANDOM_GRADIENTS, ULTIMATE_EDITING_GUIDE } from '../constants';
 import { UNIFIED_DIRECTOR_STYLES } from '../constants2';
 import {
+    // FIX: Changed to correct _DATA exports
     NCL_OPTIONS,
-    NIGHT_CITY_WEAPONS,
-    NIGHT_CITY_VEHICLES,
-    NIGHT_CITY_COMPANIONS,
+    NIGHT_CITY_WEAPONS_DATA,
+    NIGHT_CITY_VEHICLES_DATA,
+    NIGHT_CITY_COMPANIONS_DATA,
     NIGHT_CITY_COMPANION_PROMPTS,
     NIGHT_CITY_MISSIONS,
-    NIGHT_CITY_LEGENDS,
+    NIGHT_CITY_LEGENDS_DATA,
     generateRandomNCLFullPrompt,
     generateRandomCharacterDescription,
 } from '../constants1';
 import { calculateNoteHeight } from '../utils';
+import { useI18n } from '../hooks/useI18n';
 
 type AddNoteFn = (element: Omit<NoteElement, 'id' | 'zIndex'>) => void;
 
@@ -42,6 +45,7 @@ interface PromptChoiceModalProps {
 }
 
 const PromptChoiceModal: React.FC<PromptChoiceModalProps> = ({ title, options, onConfirm, onClose }) => {
+    const { t } = useI18n();
     return (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center backdrop-blur-sm" onMouseDown={onClose}>
             <div
@@ -61,20 +65,14 @@ const PromptChoiceModal: React.FC<PromptChoiceModalProps> = ({ title, options, o
                     ))}
                 </div>
                 <div className="flex justify-end mt-2">
-                    <button onClick={onClose} className="px-4 py-2 bg-rose-600 text-white rounded-md hover:bg-rose-500">取消</button>
+                    <button onClick={onClose} className="px-4 py-2 bg-rose-600 text-white rounded-md hover:bg-rose-500">{t('app.cancel')}</button>
                 </div>
             </div>
         </div>
     );
 };
 
-const NCL_NOTE_TITLES: Record<NCLCategory, string> = {
-    character: '角色設定',
-    weapons: '武器庫 & 載具',
-    partners: '任務夥伴',
-    settings: '幻夢設定',
-    scenes: '任務場景'
-};
+type NCLCategory = 'character' | 'weapons' | 'partners' | 'settings' | 'scenes';
 
 // --- REUSABLE COMPONENTS ---
 
@@ -87,7 +85,7 @@ interface CollapsibleSectionProps {
 
 const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, children, defaultOpen = true, headerClassName = "" }) => {
     const [isOpen, setIsOpen] = useState(defaultOpen);
-    const isGuideCategory = /^[IVX]+\./.test(title);
+    const isGuideCategory = /^[IVX]+\./.test(title) || /^[A-Z]\./.test(title);
 
     return (
         <div className="inspiration-section">
@@ -100,35 +98,6 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, children
                 <ChevronDown size={20} className={`${isOpen ? 'rotate-180' : ''}`} />
             </header>
             {isOpen && children}
-        </div>
-    );
-};
-
-interface ExpandableListProps {
-    items: string[];
-    onItemClick: (item: string) => void;
-    initialCount?: number;
-}
-
-const ExpandableList: React.FC<ExpandableListProps> = ({ items, onItemClick, initialCount = 20 }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
-    const displayedItems = isExpanded ? items : items.slice(0, initialCount);
-
-    return (
-        <div className="inspiration-section-body">
-            {displayedItems.map(item => (
-                <button key={item} className="inspiration-btn" onClick={() => onItemClick(item)}>
-                    {item}
-                </button>
-            ))}
-            {items.length > initialCount && (
-                <button
-                    className="inspiration-btn text-[var(--cyber-cyan)] w-full"
-                    onClick={() => setIsExpanded(!isExpanded)}
-                >
-                    {isExpanded ? '顯示較少' : `顯示更多 (${items.length - initialCount})`}
-                </button>
-            )}
         </div>
     );
 };
@@ -150,6 +119,7 @@ const ExpandablePromptList: React.FC<ExpandablePromptListProps> = ({
     expandButtonText,
     replacePrompt = false,
 }) => {
+    const { t } = useI18n();
     const [isExpanded, setIsExpanded] = useState(false);
     const displayedItems = isExpanded ? items : items.slice(0, initialCount);
 
@@ -165,7 +135,7 @@ const ExpandablePromptList: React.FC<ExpandablePromptListProps> = ({
                     className="inspiration-expand-btn"
                     onClick={() => setIsExpanded(!isExpanded)}
                 >
-                    <span>{isExpanded ? '顯示較少' : (expandButtonText || `顯示更多 (${items.length - initialCount})`)}</span>
+                    <span>{isExpanded ? t('inspirationPanel.showLess') : (expandButtonText || t('inspirationPanel.showMore', { count: items.length - initialCount }))}</span>
                     <ChevronDown size={16} className={`${isExpanded ? 'rotate-180' : ''}`} />
                 </button>
             )}
@@ -176,8 +146,6 @@ const ExpandablePromptList: React.FC<ExpandablePromptListProps> = ({
 
 // --- MAIN PANEL COMPONENT ---
 
-type NCLCategory = 'character' | 'weapons' | 'partners' | 'settings' | 'scenes';
-
 export const InspirationPanel: React.FC<InspirationPanelProps> = ({
     isOpen,
     setIsOpen,
@@ -185,17 +153,16 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
     addElement, screenToCanvas, canvasSize, elements, updateElements,
     onTriggerContextualAction
 }) => {
+    const { t } = useI18n();
     const [activeMainTab, setActiveMainTab] = useState<'tools' | 'legends'>('tools');
     const [promptChoices, setPromptChoices] = useState<{ title: string; options: string[]; onConfirm: (choice: string) => void } | null>(null);
     const [isHotAppsExpanded, setIsHotAppsExpanded] = useState(false);
     
-    const allCharOptions = NCL_OPTIONS;
-
     const [charSettings, setCharSettings] = useState(() => {
         const initialState: Record<string, string> = {};
-        Object.keys(allCharOptions).forEach(key => {
-            const optionsKey = key as keyof typeof allCharOptions;
-            const optionConfig = allCharOptions[optionsKey];
+        Object.keys(NCL_OPTIONS).forEach(key => {
+            const optionsKey = key as keyof typeof NCL_OPTIONS;
+            const optionConfig = NCL_OPTIONS[optionsKey];
             if (optionConfig && optionConfig.options) {
                initialState[key] = optionConfig.options[0];
             }
@@ -232,9 +199,10 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
 
     const generateCharacterPrompt = () => {
         const selectedOptions: Record<string, string> = {};
-        Object.entries(allCharOptions).forEach(([key, value]) => {
+        Object.entries(NCL_OPTIONS).forEach(([key, value]) => {
             const selectedValue = charSettings[key as keyof typeof charSettings];
-            if (selectedValue && selectedValue !== value.options[0] && selectedValue !== value.label) {
+            // FIX: Use t(value.labelKey) instead of value.label which does not exist.
+            if (selectedValue && selectedValue !== value.options[0] && selectedValue !== t(value.labelKey)) {
                 selectedOptions[key] = selectedValue;
             }
         });
@@ -297,7 +265,7 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
             onTriggerContextualAction("Generate a contextual Night City Legends prompt.");
         } else {
             setPromptChoices({
-                title: '選擇一組夜城傳奇劇本',
+                title: t('inspirationPanel.modalSelectNCLTitle'),
                 options: [generateRandomNCLFullPrompt(), generateRandomNCLFullPrompt(), generateRandomNCLFullPrompt()],
                 onConfirm: createNoteWithPrompt
             });
@@ -306,7 +274,7 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
 
     const handleRandomCharacterClick = () => {
         setPromptChoices({
-            title: '選擇一位隨機角色',
+            title: t('inspirationPanel.modalSelectCharacterTitle'),
             options: [generateRandomCharacterDescription(), generateRandomCharacterDescription(), generateRandomCharacterDescription()],
             onConfirm: (choice) => createNoteWithPrompt(choice)
         });
@@ -320,7 +288,7 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
         >
             <div className="inspiration-panel ml-4">
                 <div className="inspiration-panel-header">
-                    鳥巢AI創意畫布v0.6
+                    {t('inspirationPanel.title')}
                 </div>
                 
                 <div className="inspiration-main-tabs">
@@ -328,13 +296,13 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
                         className={`inspiration-main-tab-btn ${activeMainTab === 'tools' ? 'active' : ''}`}
                         onClick={() => setActiveMainTab('tools')}
                     >
-                        靈感工具
+                        {t('inspirationPanel.tabTools')}
                     </button>
                     <button
                         className={`inspiration-main-tab-btn legends-tab ${activeMainTab === 'legends' ? 'active' : ''}`}
                         onClick={() => setActiveMainTab('legends')}
                     >
-                        夜城傳奇
+                        {t('inspirationPanel.tabLegends')}
                     </button>
                 </div>
 
@@ -343,7 +311,7 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
                         <>
                             <div className="inspiration-section">
                                 <header className="inspiration-section-header !cursor-default">
-                                    <h3>-火熱應用</h3>
+                                    <h3>{t('inspirationPanel.hotApps')}</h3>
                                 </header>
                                 <div className="inspiration-section-body">
                                      {displayedHotApps.map(app => (
@@ -361,25 +329,26 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
                                             className="inspiration-btn text-[var(--cyber-cyan)] w-full"
                                             onClick={() => setIsHotAppsExpanded(!isHotAppsExpanded)}
                                         >
-                                            {isHotAppsExpanded ? '顯示較少' : `顯示更多 (${HOT_APPLICATIONS.length - 20})`}
+                                            {isHotAppsExpanded ? t('inspirationPanel.showLess') : t('inspirationPanel.showMore', { count: HOT_APPLICATIONS.length - 20 })}
                                         </button>
                                     )}
                                 </div>
                             </div>
 
-                            <CollapsibleSection title="終極改圖指南" defaultOpen={true}>
+                            <CollapsibleSection title={t('inspirationPanel.ultimateGuide')} defaultOpen={true}>
                                 <div className="w-full space-y-2 p-3">
-                                {ULTIMATE_EDITING_GUIDE.map(guide => (
-                                    <CollapsibleSection key={guide.category} title={guide.category} defaultOpen={false}>
+                                {/* FIX: Changed to Object.values to iterate over the guide object */}
+                                {Object.values(ULTIMATE_EDITING_GUIDE).map(guide => (
+                                    <CollapsibleSection key={guide.categoryKey} title={t(guide.categoryKey)} defaultOpen={false}>
                                         <div className="inspiration-section-body flex-col !items-stretch">
                                             {guide.items.map(item => (
                                                  <button
-                                                    key={item.name}
+                                                    key={item.nameKey}
                                                     className="inspiration-btn !text-left !w-full"
-                                                    title={item.prompt}
-                                                    onClick={() => handleButtonClick(item.prompt)}
+                                                    title={t(item.promptKey)}
+                                                    onClick={() => handleButtonClick(t(item.promptKey))}
                                                 >
-                                                    {item.name}
+                                                    {t(item.nameKey)}
                                                 </button>
                                             ))}
                                          </div>
@@ -393,48 +362,48 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
                     {activeMainTab === 'legends' && (
                         <>
                             <div className="p-2 space-y-2">
-                                <button onClick={handleRandomNCLClick} className="inspiration-btn-cyberpunk w-full mb-2">夜城傳奇隨機提示</button>
-                                <CollapsibleSection title="角色設定" defaultOpen={false} headerClassName="!py-2">
+                                <button onClick={handleRandomNCLClick} className="inspiration-btn-cyberpunk w-full mb-2">{t('inspirationPanel.randomNCLPrompt')}</button>
+                                <CollapsibleSection title={t('inspirationPanel.characterCreation')} defaultOpen={false} headerClassName="!py-2">
                                     <div className="inspiration-section-body !p-2 flex-col gap-2">
                                         <div className="grid grid-cols-2 gap-x-2 gap-y-3">
-                                            {Object.entries(allCharOptions).map(([key, value]) => (
+                                            {Object.entries(NCL_OPTIONS).map(([key, value]) => (
                                                 <div key={key} className="flex flex-col gap-1">
                                                     <select value={charSettings[key]} onChange={(e) => handleCharSettingChange(key as keyof typeof charSettings, e.target.value)} className="inspiration-btn w-full !text-xs !py-1.5">
-                                                        {value.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                                        {value.options.map((opt, index) => <option key={opt} value={opt}>{index === 0 ? t(value.labelKey) : opt}</option>)}
                                                     </select>
                                                 </div>
                                             ))}
                                         </div>
                                         <div className="flex gap-2 mt-2">
-                                            <button onClick={generateCharacterPrompt} className="inspiration-btn-cyberpunk w-full">送出角色提示</button>
-                                            <button onClick={handleRandomCharacterClick} className="inspiration-btn-cyberpunk w-full">隨機角色提示</button>
+                                            <button onClick={generateCharacterPrompt} className="inspiration-btn-cyberpunk w-full">{t('inspirationPanel.submitCharacterPrompt')}</button>
+                                            <button onClick={handleRandomCharacterClick} className="inspiration-btn-cyberpunk w-full">{t('inspirationPanel.randomCharacterPrompt')}</button>
                                         </div>
                                     </div>
                                 </CollapsibleSection>
-                                <CollapsibleSection title="武器庫 & 載具" defaultOpen={false} headerClassName="!py-2">
+                                <CollapsibleSection title={t('inspirationPanel.weaponAndVehicle')} defaultOpen={false} headerClassName="!py-2">
                                     <div className="inspiration-section-body !p-2 flex-col gap-2">
                                         <select onChange={(e) => handleDropdownSelect(e, 'weapons')} className="inspiration-btn w-full !text-xs !py-1.5">
-                                            <option value="">選擇武器...</option>
-                                            {Object.entries(NIGHT_CITY_WEAPONS).map(([cat, items]) => <optgroup key={cat} label={cat}>{items.map(item => <option key={item} value={item}>{item}</option>)}</optgroup>)}
+                                            <option value="">{t('inspirationPanel.selectWeapon')}</option>
+                                            {Object.entries(NIGHT_CITY_WEAPONS_DATA).map(([catKey, items]) => <optgroup key={catKey} label={catKey}>{items.map(item => <option key={item} value={item}>{item}</option>)}</optgroup>)}
                                         </select>
                                         <select onChange={(e) => handleDropdownSelect(e, 'weapons')} className="inspiration-btn w-full !text-xs !py-1.5">
-                                            <option value="">選擇載具...</option>
-                                            {Object.entries(NIGHT_CITY_VEHICLES).map(([cat, items]) => <optgroup key={cat} label={cat}>{items.map(item => <option key={item} value={item}>{item}</option>)}</optgroup>)}
+                                            <option value="">{t('inspirationPanel.selectVehicle')}</option>
+                                            {Object.entries(NIGHT_CITY_VEHICLES_DATA).map(([catKey, items]) => <optgroup key={catKey} label={catKey}>{items.map(item => <option key={item} value={item}>{item}</option>)}</optgroup>)}
                                         </select>
                                     </div>
                                 </CollapsibleSection>
-                                <CollapsibleSection title="任務夥伴" defaultOpen={false} headerClassName="!py-2">
+                                <CollapsibleSection title={t('inspirationPanel.missionPartners')} defaultOpen={false} headerClassName="!py-2">
                                      <div className="inspiration-section-body !p-2 flex-col">
                                          <select onChange={handleCompanionSelect} className="inspiration-btn w-full !text-xs !py-1.5">
-                                            <option value="">選擇夥伴...</option>
-                                            {Object.entries(NIGHT_CITY_COMPANIONS).map(([cat, items]) => <optgroup key={cat} label={cat}>{items.map(item => <option key={item} value={item}>{item}</option>)}</optgroup>)}
+                                            <option value="">{t('inspirationPanel.selectPartner')}</option>
+                                            {Object.entries(NIGHT_CITY_COMPANIONS_DATA).map(([catKey, items]) => <optgroup key={catKey} label={catKey}>{items.map(item => <option key={item} value={item}>{item}</option>)}</optgroup>)}
                                         </select>
                                      </div>
                                 </CollapsibleSection>
-                                <CollapsibleSection title="幻夢設定" defaultOpen={false} headerClassName="!py-2">
+                                <CollapsibleSection title={t('inspirationPanel.dreamSetting')} defaultOpen={false} headerClassName="!py-2">
                                     <div className="inspiration-section-body !p-2 flex-col gap-2">
                                          <select onChange={(e) => handleDropdownSelect(e, 'settings')} className="inspiration-btn w-full !text-xs !py-1.5">
-                                            <option value="">選擇任務類型...</option>
+                                            <option value="">{t('inspirationPanel.selectMissionType')}</option>
                                             {NIGHT_CITY_MISSIONS.map(mission => <optgroup key={mission.label} label={mission.label}>{mission.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}</optgroup>)}
                                         </select>
                                         <select onChange={(e) => handleDropdownSelect(e, 'settings')} className="inspiration-btn w-full !text-xs !py-1.5">
@@ -443,18 +412,21 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
                                     </div>
                                 </CollapsibleSection>
                             </div>
-                            {Object.entries(NIGHT_CITY_LEGENDS).map(([category, subcategories]) => (
-                                <div key={category} className="inspiration-section cyberpunk-section">
-                                    <h3 className="cyberpunk-section-header">{category}</h3>
+                            {Object.entries(NIGHT_CITY_LEGENDS_DATA).map(([categoryKey, subcategories]) => (
+                                <div key={categoryKey} className="inspiration-section cyberpunk-section">
+                                    <h3 className="cyberpunk-section-header">{t(`inspirationPanel.ncl.categories.${categoryKey}`)}</h3>
                                     
-                                    <ExpandablePromptList
-                                        items={(Object.values(subcategories as any) as { name: string; prompt: string }[][]).flat()}
-                                        onItemClick={(prompt) => handleButtonClick(prompt)}
-                                        initialCount={15}
-                                        buttonClassName="inspiration-btn-cyberpunk"
-                                        expandButtonText={`更多${category}場景`}
-                                        replacePrompt={true}
-                                    />
+                                    {Object.entries(subcategories).map(([subCategoryKey, items]) => (
+                                        <ExpandablePromptList
+                                            key={subCategoryKey}
+                                            items={items}
+                                            onItemClick={(prompt, replace) => handleButtonClick(prompt)}
+                                            initialCount={15}
+                                            buttonClassName="inspiration-btn-cyberpunk"
+                                            expandButtonText={t('inspirationPanel.moreScenes', { category: t(`inspirationPanel.ncl.subCategories.${subCategoryKey}`) })}
+                                            replacePrompt={true}
+                                        />
+                                    ))}
                                 </div>
                             ))}
                         </>
@@ -464,10 +436,10 @@ export const InspirationPanel: React.FC<InspirationPanelProps> = ({
              <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-12 h-24 bg-slate-900/80 backdrop-blur-md rounded-r-lg border-y border-r border-[var(--cyber-border)] flex flex-col items-center justify-center text-gray-400 hover:text-white transition-colors"
-                title="靈感工具"
+                title={t('inspirationPanel.toggle')}
             >
                 <Lightbulb size={20} className={`transition-transform duration-300 ${isOpen ? 'rotate-12' : ''}`} />
-                <span className={`mt-2 text-xs writing-mode-vertical-rl transition-transform duration-300 ${isOpen ? '-rotate-12' : ''}`}>靈感</span>
+                <span className={`mt-2 text-xs writing-mode-vertical-rl transition-transform duration-300 ${isOpen ? '-rotate-12' : ''}`}>{t('inspirationPanel.inspiration')}</span>
                 {isOpen ? <ChevronLeft size={16} className="mt-2" /> : <ChevronRight size={16} className="mt-2" />}
             </button>
             {promptChoices && <PromptChoiceModal {...promptChoices} onClose={() => setPromptChoices(null)} />}
